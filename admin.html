@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1020">
+  <title>管理员上传 · 像素游乐场</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b1020;--text:#edf2ff;--muted:#99a7c2;--accent:#8b7cff;--border:#ffffff22}*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--text);background:radial-gradient(circle at 15% 0%,#29204d 0,transparent 35%),var(--bg);font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif}button,input,textarea,select{font:inherit}button,a{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #b9b0ff;outline-offset:3px}.wrap{width:min(760px,calc(100% - 28px));margin:28px auto}.head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}.head a{color:#c8c0ff}.panel{padding:24px;background:#141c31;border:1px solid var(--border);border-radius:20px}.panel h1{margin:0 0 10px;font-size:28px}.muted{color:var(--muted);line-height:1.7;font-size:14px}.warning{padding:13px 15px;border-radius:12px;background:#79541b33;border:1px solid #ffd16655;color:#ffe1a0;font-size:13px;line-height:1.7;margin:16px 0}.form{display:grid;gap:15px;margin-top:20px}.form label{display:grid;gap:7px;font-size:14px}.form input,.form textarea,.form select{width:100%;padding:11px 12px;color:var(--text);background:#0b1222;border:1px solid var(--border);border-radius:10px}.form textarea{resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.button{padding:11px 16px;color:white;background:#263451;border:1px solid var(--border);border-radius:10px}.primary{background:var(--accent);border-color:transparent;font-weight:700}.button:disabled{opacity:.55;cursor:wait}.preview{max-width:100%;max-height:220px;object-fit:contain;border-radius:12px}.status{min-height:24px;color:#bdebd7;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}.progress{height:8px;background:#ffffff15;border-radius:9px;overflow:hidden}.progress span{display:block;width:0;height:100%;background:#8b7cff;transition:width .2s}.hint{font-size:12px;color:#aab7d0}.required{color:#ffb6c1}code{color:#d6ceff}@media(max-width:560px){.wrap{margin:14px auto}.panel{padding:18px}.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="head"><a href="./">← 返回游戏盒</a><span>管理员上传</span></div>
+    <section class="panel">
+      <h1>上传游戏资源</h1>
+      <p class="muted">选择一个单文件 HTML 游戏和可选封面。提交后会把文件写入 GitHub 仓库，并更新游戏目录；发布完成后首页会自动显示新游戏。</p>
+      <div class="warning"><strong>安全提醒：</strong>此静态页面不会保存你的 GitHub Token，但 Token 会在本页内存中用于仓库写入。请只使用针对 <code>godblees/game_home</code> 的 Fine-grained Token，并只授予 <strong>Contents: Read and write</strong>。不要把 Token 发给别人；完成后关闭页面即可清除。</div>
+      <form id="uploadForm" class="form">
+        <label>GitHub Fine-grained Token <span class="required">*</span><input id="token" type="password" autocomplete="off" required placeholder="粘贴仅对此仓库授权的 Token"><span class="hint">在 GitHub → Settings → Developer settings → Fine-grained tokens 创建；Repository access 选此仓库，Repository permissions 中 Contents 设为 Read and write。</span></label>
+        <div class="row">
+          <label>游戏名称 <span class="required">*</span><input id="title" maxlength="50" required placeholder="例如：我的冒险游戏"></label>
+          <label>游戏分类<select id="category"><option>休闲</option><option>益智</option><option>街机</option><option>动作</option><option>其他</option></select></label>
+        </div>
+        <label>游戏介绍<textarea id="description" rows="3" maxlength="240" placeholder="玩法介绍、键盘操作等"></textarea></label>
+        <label>游戏 HTML 文件（最大 10 MB）<input id="gameFile" type="file" accept=".html,.htm,text/html" required><span class="hint">目前支持单文件 HTML（CSS 和 JavaScript 内嵌）。</span></label>
+        <label>游戏封面（PNG、JPG、WebP，最大 5 MB，可选）<input id="coverFile" type="file" accept="image/png,image/jpeg,image/webp"><img id="preview" class="preview" alt="封面预览" hidden></label>
+        <div class="progress" aria-hidden="true"><span id="progress"></span></div>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+        <button id="submit" class="button primary" type="submit">上传并添加到游戏列表</button>
+      </form>
+    </section>
+  </main>
+  <script>
+    'use strict';
+    const OWNER='godblees';
+    const REPO='game_home';
+    const BRANCH='main';
+    const API='https://api.github.com';
+    const $=id=>document.getElementById(id);
+    const form=$('uploadForm');
+    let previewUrl=null;
+
+    function setStatus(message,error=false){$('status').textContent=message;$('status').style.color=error?'#ffb6c1':'#bdebd7'}
+    function setProgress(percent){$('progress').style.width=Math.max(0,Math.min(100,percent))+'%'}
+    function slugify(text){return text.normalize('NFKD').toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)||'game'}
+    function bytesToBase64(bytes){let binary='';const step=0x8000;for(let i=0;i<bytes.length;i+=step)binary+=String.fromCharCode(...bytes.subarray(i,i+step));return btoa(binary)}
+    function encodeText(text){return bytesToBase64(new TextEncoder().encode(text))}
+    async function githubRequest(path,token,options={}){
+      const response=await fetch(API+'/repos/'+OWNER+'/'+REPO+'/contents/'+path,{...options,headers:{'Accept':'application/vnd.github+json','Authorization':'Bearer '+token,'X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json',...(options.headers||{})}});
+      const data=await response.json().catch(()=>({}));
+      if(!response.ok){const error=new Error(data.message||('GitHub API 返回 '+response.status));error.status=response.status;throw error}
+      return data;
+    }
+    async function putFile(path,bytes,message,token){
+      let sha;
+      try{const current=await githubRequest(path+'?ref='+BRANCH,token);sha=current.sha}catch(error){if(error.status!==404)throw error}
+      const body={message,content:bytesToBase64(bytes),branch:BRANCH};
+      if(sha)body.sha=sha;
+      return githubRequest(path,token,{method:'PUT',body:JSON.stringify(body)});
+    }
+    function getImageExtension(file){return {'image/png':'png','image/jpeg':'jpg','image/webp':'webp'}[file.type]||null}
+
+    $('coverFile').addEventListener('change',()=>{
+      if(previewUrl)URL.revokeObjectURL(previewUrl);
+      previewUrl=null;$('preview').hidden=true;$('preview').removeAttribute('src');
+      const file=$('coverFile').files[0];if(!file)return;
+      if(!getImageExtension(file)||file.size>5*1024*1024){setStatus('封面需为 PNG、JPG 或 WebP，且不超过 5 MB。',true);$('coverFile').value='';return}
+      previewUrl=URL.createObjectURL(file);$('preview').src=previewUrl;$('preview').hidden=false;setStatus('');
+    });
+    $('gameFile').addEventListener('change',()=>{const file=$('gameFile').files[0];if(file&&!$('title').value.trim())$('title').value=file.name.replace(/\.html?$/i,'').slice(0,50)});
+
+    form.addEventListener('submit',async event=>{
+      event.preventDefault();
+      const token=$('token').value.trim();
+      const title=$('title').value.trim();
+      const gameFile=$('gameFile').files[0];
+      const coverFile=$('coverFile').files[0];
+      if(!token||!title||!gameFile){setStatus('请填写 Token、游戏名称并选择 HTML 文件。',true);return}
+      if(!/\.html?$/i.test(gameFile.name)||gameFile.size===0||gameFile.size>10*1024*1024){setStatus('请选择有效的 HTML 文件（非空，最大 10 MB）。',true);return}
+      if(coverFile&&(!getImageExtension(coverFile)||coverFile.size>5*1024*1024)){setStatus('封面需为 PNG、JPG 或 WebP，且不超过 5 MB。',true);return}
+      const button=$('submit');button.disabled=true;
+      try{
+        setProgress(5);setStatus('正在读取游戏文件……');
+        const gameBytes=new Uint8Array(await gameFile.arrayBuffer());
+        const id=slugify(title)+'-'+Date.now().toString(36);
+        const gamePath='games/'+id+'/index.html';
+        setProgress(20);setStatus('正在上传游戏文件……');
+        await putFile(gamePath,gameBytes,'Add game: '+title,token);
+        let coverPath='';
+        if(coverFile){setProgress(45);setStatus('正在上传封面……');const ext=getImageExtension(coverFile);coverPath='assets/covers/'+id+'.'+ext;await putFile(coverPath,new Uint8Array(await coverFile.arrayBuffer()),'Add cover: '+title,token)}
+        setProgress(70);setStatus('正在更新游戏目录……');
+        let catalog={version:1,games:[]},catalogSha;
+        try{const existing=await githubRequest('games.json?ref='+BRANCH,token);catalogSha=existing.sha;const decoded=decodeURIComponent(escape(atob(existing.content.replace(/\s/g,''))));catalog=JSON.parse(decoded);if(!Array.isArray(catalog.games))catalog.games=[]}catch(error){if(error.status!==404)throw error}
+        const game={id,title,category:$('category').value,description:$('description').value.trim()||'新上传的网页小游戏。',emoji:'🎮',color:'linear-gradient(135deg,#3862a8,#30204d)',url:'./games/'+id+'/index.html'};
+        if(coverPath)game.cover='./'+coverPath;
+        catalog.version=1;catalog.games.unshift(game);
+        const manifestBytes=new TextEncoder().encode(JSON.stringify(catalog,null,2)+'\n');
+        const body={message:'Add game to catalog: '+title,content:bytesToBase64(manifestBytes),branch:BRANCH};if(catalogSha)body.sha=catalogSha;
+        await githubRequest('games.json',token,{method:'PUT',body:JSON.stringify(body)});
+        setProgress(100);setStatus('上传成功！游戏已加入列表。等待 GitHub Pages 发布后刷新首页即可看到。\n文件：'+gamePath+(coverPath?'\n封面：'+coverPath:''));
+        form.reset();$('preview').hidden=true;if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=null;
+      }catch(error){console.error(error);setStatus('上传失败：'+error.message+'\n请确认 Token 对此仓库有 Contents Read and write 权限；如果提示冲突，请稍后重试。',true)}finally{button.disabled=false}
+    });
+    window.addEventListener('pagehide',()=>{ $('token').value='';if(previewUrl)URL.revokeObjectURL(previewUrl) });
+  </script>
+</body>
+</html>
