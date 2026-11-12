@@ -1,4 +1,15 @@
 {
   "version": 1,
-  "games": []
+  "games": [
+    {
+      "id": "逐光跑者-mwd73amx",
+      "title": "逐光跑者",
+      "category": "休闲",
+      "description": "3D跑酷小游戏",
+      "emoji": "🎮",
+      "color": "linear-gradient(135deg,#3862a8,#30204d)",
+      "url": "./games/逐光跑者-mwd73amx/index.html",
+      "cover": "./assets/covers/逐光跑者-mwd73amx.jpg"
+    }
+  ]
 }
