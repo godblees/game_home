@@ -6,1079 +6,156 @@
   <meta name="theme-color" content="#0b1020">
   <title>像素游乐场 · 在线小游戏</title>
   <style>
-    :root {
-      color-scheme: dark;
-      --bg: #0b1020;
-      --panel: #141c31;
-      --text: #edf2ff;
-      --muted: #99a7c2;
-      --accent: #8b7cff;
-      --border: rgba(255,255,255,.12);
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 15% 0%, #29204d 0, transparent 35%),
-        radial-gradient(circle at 90% 30%, #102f40 0, transparent 30%),
-        var(--bg);
-      font-family: system-ui, -apple-system, "Microsoft YaHei", sans-serif;
-    }
-    button, input { font: inherit; }
-    button { cursor: pointer; }
-    [hidden] { display: none !important; }
-    .wrap { width: min(1120px, calc(100% - 36px)); margin: auto; }
-    header {
-      display: flex; align-items: center; justify-content: space-between; gap: 16px;
-      padding: 25px 0; border-bottom: 1px solid var(--border);
-    }
-    .logo {
-      color: var(--text); text-decoration: none; font-size: 21px; font-weight: 800;
-    }
-    .logo span { color: #ad9fff; }
-    .badge {
-      display: inline-block; padding: 6px 12px; color: #bcafff; border: 1px solid #8b7cff55; border-radius: 100px; font-size: 13px;
-    }
-    .hero { padding: 58px 0 30px; }
-    h1 {
-      margin: 18px 0 14px; font-size: clamp(32px, 6vw, 58px); letter-spacing: -2px; line-height: 1.15;
-    }
-    .hero p {
-      max-width: 650px; color: var(--muted); line-height: 1.8; font-size: 15px;
-    }
-    .toolbar {
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin: 18px 0 20px;
-    }
-    .filters { display: flex; flex-wrap: wrap; gap: 8px; }
-    .filter {
-      padding: 9px 15px; color: var(--muted); background: transparent; border: 1px solid var(--border); border-radius: 100px; border-color: var(--border);
-    }
-    .filter.active {
-      color: #ded8ff; background: rgba(139,124,255,0.15); border-color: rgba(139,124,255,.8);
-    }
-    .search {
-      width: min(100%, 290px); padding: 11px 15px; color: white; background: #131c30; border: 1px solid var(--border); border-radius: 12px;
-    }
-    .summary {
-      margin: 0 0 14px; color: var(--muted); font-size: 13px;
-    }
-    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; padding-bottom: 45px; }
-    .card {
-      display: flex; flex-direction: column; overflow: hidden; background: linear-gradient(150deg, #1b2540, #121b2e); border: 1px solid var(--border); border-radius: 20px; transition: transform .2s, border-color .2s;
-    }
-    .card:hover { transform: translateY(-4px); border-color: #8b7cff88; }
-    .cover {
-      position: relative; display: grid; place-items: center; height: 170px; overflow: hidden; background: #263453; font-size: 68px;
-    }
-    .card-body { display: flex; flex: 1; flex-direction: column; padding: 20px; }
-    .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
-    .card h2 { margin: 0; font-size: 20px; }
-    .tag { padding: 4px 8px; color: #bbc7df; background: #ffffff0c; border-radius: 6px; font-size: 12px; white-space: nowrap; }
-    .card p {
-      flex: 1; min-height: 52px; color: var(--muted); font-size: 14px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere;
-    }
-    .play {
-      width: 100%; padding: 12px 16px; border: 0; border-radius: 12px; background: var(--accent); color: white; font-weight: 700;
-    }
-    .empty {
-      grid-column: 1 / -1; padding: 60px 20px; color: var(--muted); text-align: center;
-    }
-    footer {
-      padding: 24px 0; color: var(--muted); border-top: 1px solid var(--border); font-size: 13px; line-height: 1.8;
-    }
-    dialog {
-      width: min(1100px, calc(100% - 24px)); max-height: 95dvh; padding: 0; color: white; background: #10182a; border: 1px solid #39445c; border-radius: 18px;
-    }
-    dialog::backdrop { background: #030610d9; backdrop-filter: blur(8px); }
-    .player {
-      display: flex; flex-direction: column; height: min(780px, 88dvh);
-    }
-    .player-header {
-      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--border);
-    }
-    .player-actions { display: flex; gap: 8px; }
-    .player-actions button {
-      padding: 8px 10px; color: var(--text); background: #202b43; border: 1px solid var(--border); border-radius: 9px; font-size: 13px;
-    }
-    iframe {
-      display: block; flex: 1; width: 100%; min-height: 0; background: #0b1020; border: 0;
-    }
-    @media (max-width: 850px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (max-width: 560px) {
-      .grid { grid-template-columns: 1fr; }
-      .hero { padding-top: 36px; }
-      .search { width: 100%; }
-      .logo { font-size: 18px; }
-      .cover { height: 160px; }
-    }
+    :root{color-scheme:dark;--bg:#0b1020;--text:#edf2ff;--muted:#99a7c2;--accent:#8b7cff;--border:rgba(255,255,255,.12)}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--text);background:radial-gradient(circle at 15% 0%,#29204d 0,transparent 35%),radial-gradient(circle at 90% 30%,#102f40 0,transparent 30%),var(--bg);font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid #b9b0ff;outline-offset:3px}.wrap{width:min(1120px,calc(100% - 36px));margin:auto}header{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:24px 0;border-bottom:1px solid var(--border)}.logo{color:var(--text);text-decoration:none;font-size:21px;font-weight:800}.logo span{color:#ad9fff}.badge{display:inline-block;padding:6px 12px;color:#bcafff;border:1px solid #8b7cff55;border-radius:100px;font-size:13px}.hero{padding:55px 0 28px}h1{margin:16px 0 12px;font-size:clamp(34px,6vw,58px);letter-spacing:-2px;line-height:1.15}.hero p{max-width:660px;color:var(--muted);line-height:1.8}.toolbar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px;margin:18px 0}.filters{display:flex;flex-wrap:wrap;gap:8px}.filter{padding:9px 15px;color:var(--muted);background:transparent;border:1px solid var(--border);border-radius:100px}.filter.active{color:#ded8ff;background:#8b7cff25;border-color:#8b7cff}.search{width:min(100%,290px);padding:11px 15px;color:white;background:#131c30;border:1px solid var(--border);border-radius:12px}.summary{margin:0 0 14px;color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;padding-bottom:45px}.card{display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(150deg,#1b2540,#121b2e);border:1px solid var(--border);border-radius:20px;transition:transform .2s,border-color .2s}.card:hover{transform:translateY(-4px);border-color:#8b7cff88}.cover{display:grid;place-items:center;height:165px;font-size:68px}.card-body{display:flex;flex:1;flex-direction:column;padding:20px}.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.card h2{margin:0;font-size:20px}.tag{padding:4px 8px;color:#bbc7df;background:#ffffff0c;border-radius:6px;font-size:12px;white-space:nowrap}.card p{flex:1;min-height:52px;color:var(--muted);font-size:14px;line-height:1.7}.play{width:100%;padding:11px 14px;color:white;background:var(--accent);border:0;border-radius:11px;font-weight:700}.play:hover{background:#9a8eff}.empty{grid-column:1/-1;padding:55px 20px;color:var(--muted);text-align:center}footer{padding:24px 0;color:var(--muted);border-top:1px solid var(--border);font-size:13px;line-height:1.8}dialog{width:min(1000px,calc(100% - 20px));height:min(820px,94dvh);max-height:94dvh;padding:0;color:white;background:#10182a;border:1px solid #39445c;border-radius:18px}dialog::backdrop{background:#030610dd;backdrop-filter:blur(7px)}.player{display:flex;flex-direction:column;height:100%}.player-header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border)}#playerTitle{overflow-wrap:anywhere}.player-actions{display:flex;gap:8px}.player-actions button{padding:8px 10px;color:var(--text);background:#202b43;border:1px solid var(--border);border-radius:9px;font-size:13px}.player-actions button:hover{background:#303c58}iframe{display:block;flex:1;width:100%;min-height:0;background:#0b1020;border:0}.player:fullscreen{height:100dvh;background:#10182a}@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.grid{grid-template-columns:1fr}.hero{padding-top:36px}.search{width:100%}.logo{font-size:18px}.cover{height:150px}}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <a class="logo" href="./">🎮 像素<span>游乐场</span></a>
-      <span class="badge">在线游戏集合</span>
-    </header>
-
+    <header><a class="logo" href="./">🎮 像素<span>游乐场</span></a><span class="badge">无需下载 · 即点即玩</span></header>
     <main>
-      <section class="hero">
-        <span class="badge">独立制作 · 即点即玩</span>
-        <h1>快乐，不用下载。</h1>
-        <p>欢迎来到我的小游戏世界。这里汇集了多个网页小游戏，选择一个喜欢的，马上开始挑战吧。</p>
-      </section>
-
-      <section aria-label="游戏列表">
-        <div class="toolbar">
-          <div id="filters" class="filters" aria-label="游戏分类"></div>
-          <input id="search" class="search" type="search" placeholder="🔍 搜索游戏名称、玩法……" aria-label="搜索游戏">
-        </div>
-        <p id="summary" class="summary" aria-live="polite"></p>
-        <div id="gameGrid" class="grid"></div>
-      </section>
+      <section class="hero"><span class="badge">独立制作 · 即点即玩</span><h1>快乐，不用下载。</h1><p>挑一款喜欢的小游戏，马上开始挑战。支持电脑键盘和手机触屏操作。</p></section>
+      <section aria-label="游戏列表"><div class="toolbar"><div id="filters" class="filters" aria-label="游戏分类"></div><input id="search" class="search" type="search" placeholder="🔍 搜索游戏名称、玩法……" aria-label="搜索游戏"></div><p id="summary" class="summary" aria-live="polite"></p><div id="gameGrid" class="grid"></div></section>
     </main>
-
-    <footer>
-      © <span id="year"></span> 像素游乐场 · 我的创意，我的游戏<br>
-      这是一个单页静态网站，直接部署在 GitHub Pages 即可访问。
-    </footer>
+    <footer>© <span id="year"></span> 像素游乐场 · 游戏进度在关闭窗口后重置。</footer>
   </div>
-
-  <dialog id="gameDialog" aria-labelledby="playerTitle">
-    <div class="player">
-      <div class="player-header">
-        <strong id="playerTitle">游戏</strong>
-        <div class="player-actions">
-          <button id="restartButton" type="button">↻ 重开</button>
-          <button id="fullscreenButton" type="button">⛶ 全屏</button>
-          <button id="closeButton" type="button">✕ 关闭</button>
-        </div>
-      </div>
-      <iframe id="gameFrame" title="游戏运行区域" sandbox="allow-scripts allow-pointer-lock" allow="fullscreen" referrerpolicy="no-referrer"></iframe>
-    </div>
-  </dialog>
+  <dialog id="gameDialog" aria-labelledby="playerTitle"><div id="player" class="player"><div class="player-header"><strong id="playerTitle">游戏</strong><div class="player-actions"><button id="restartButton" type="button">↻ 重开</button><button id="fullscreenButton" type="button">⛶ 全屏</button><button id="closeButton" type="button">✕ 关闭</button></div></div><iframe id="gameFrame" title="游戏运行区域" sandbox="allow-scripts allow-pointer-lock" allow="fullscreen" referrerpolicy="no-referrer"></iframe></div></dialog>
 
   <script>
     "use strict";
 
-    const clickGame = `
-      <!DOCTYPE html>
-      <html lang="zh-CN">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <style>
-          * { box-sizing: border-box; }
-          body {
-            margin: 0; min-height: 100vh; display: grid; place-items: center;
-            text-align: center; color: white; background: radial-gradient(circle at top, #312752, #0b1020 75%);
-            font-family: system-ui, sans-serif;
-          }
-          main { width: min(100%, 480px); padding: 24px; }
-          h1 { font-size: 30px; margin-bottom: 12px; }
-          p { color: #b9b5cf; line-height: 1.7; }
-          .stats {
-            display: flex; justify-content: center; gap: 35px; margin: 28px 0;
-          }
-          .stats strong {
-            display: block; color: #b7a6ff; font-size: 40px;
-          }
-          .stats span { color: #aaa5c4; font-size: 14px; }
-          button { font: inherit; cursor: pointer; }
-          #target {
-            width: 170px; height: 170px; color: white; background: linear-gradient(135deg, #a68bff, #6852e7);
-            border: 0; border-radius: 50%; box-shadow: 0 12px 50px rgba(139,124,255,0.35); font-size: 26px; font-weight: bold;
-          }
-          #target:disabled { opacity: .6; cursor: default; }
-          #start {
-            display: block; margin: 24px auto 0; padding: 12px 24px; color: white; background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.25); border-radius: 10px;
-          }
-          #result { min-height: 54px; }
-        </style>
-      </head>
-      <body>
-        <main>
-          <h1>⚡ 极速点击</h1>
-          <p>在 10 秒内尽可能多地点击按钮，挑战你的手速！</p>
-          <div class="stats">
-            <div><strong id="score">0</strong><span>点击次数</span></div>
-            <div><strong id="time">10.0</strong><span>剩余秒数</span></div>
-          </div>
-          <button id="target" disabled>点我！</button>
-          <button id="start">开始挑战</button>
-          <p id="result" aria-live="polite">准备好了吗？</p>
-        </main>
-        <script>
-          const target = document.getElementById("target");
-          const start = document.getElementById("start");
-          const scoreText = document.getElementById("score");
-          const timeText = document.getElementById("time");
-          const result = document.getElementById("result");
-          let score = 0;
-          let endTime = 0;
-          let timer = null;
-          let running = false;
-          let best = Number(localStorage.getItem("clickBest") || 0);
+    const clickGame = `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;color:#fff;background:radial-gradient(circle at top,#312752,#0b1020 75%);font-family:system-ui,sans-serif;text-align:center}main{width:min(100%,470px);padding:22px}.stats{display:flex;justify-content:center;gap:32px;margin:22px}.stats b{display:block;color:#b7a6ff;font-size:38px}p{color:#b9b5cf;line-height:1.6}button{font:inherit;cursor:pointer}#target{width:170px;height:170px;color:white;background:linear-gradient(135deg,#a68bff,#6852e7);border:0;border-radius:50%;box-shadow:0 12px 50px #8b7cff55;font-size:25px;font-weight:bold;touch-action:manipulation}#target:active{transform:scale(.96)}#target:disabled{opacity:.55}#start{display:block;margin:20px auto;padding:11px 23px;color:white;background:#ffffff15;border:1px solid #ffffff35;border-radius:10px}.hint{min-height:25px}</style><main><h1>⚡ 极速点击</h1><p>在 10 秒内尽可能多地点击按钮！</p><div class="stats"><span><b id="score">0</b>点击次数</span><span><b id="time">10.0</b>剩余秒数</span></div><button id="target" disabled>点我！</button><button id="start">开始挑战</button><p id="hint" class="hint" aria-live="polite">准备好了吗？</p></main><script>
+const target=document.getElementById('target'),start=document.getElementById('start'),scoreEl=document.getElementById('score'),timeEl=document.getElementById('time'),hint=document.getElementById('hint');let score=0,endAt=0,timer=null,running=false,best=0;
+function finish(){if(!running)return;running=false;clearInterval(timer);timer=null;target.disabled=true;start.disabled=false;start.textContent='再挑战一次';timeEl.textContent='0.0';if(score>best)best=score;hint.textContent='挑战完成：'+score+' 次，最佳 '+best+' 次。'}
+start.onclick=()=>{clearInterval(timer);score=0;running=true;scoreEl.textContent='0';timeEl.textContent='10.0';hint.textContent='加油，冲击更高分！';target.disabled=false;start.disabled=true;endAt=performance.now()+10000;timer=setInterval(()=>{let left=Math.max(0,endAt-performance.now());timeEl.textContent=(left/1000).toFixed(1);if(left===0)finish()},25)};
+target.onclick=()=>{if(running&&performance.now()<endAt)scoreEl.textContent=String(++score);else if(running)finish()};
+<\/script></html>`;
 
-          function finish() {
-            if (!running) return;
-            running = false;
-            clearInterval(timer);
-            target.disabled = true;
-            start.disabled = false;
-            start.textContent = "再挑战一次";
-            timeText.textContent = "0.0";
-            result.textContent = "挑战完成！共点击 " + score + " 次，平均每秒 " + (score / 10).toFixed(1) + " 次。";
-            if (score > best) {
-              best = score;
-              localStorage.setItem("clickBest", String(best));
-            }
-          }
+    const snakeGame = `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><style>*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;color:white;background:radial-gradient(circle at top,#17392f,#0b1020 75%);font-family:system-ui,sans-serif;text-align:center}main{width:min(100%,470px);padding:14px}h1{margin:4px}.hud{display:flex;justify-content:center;gap:25px;margin:10px}.hud b{display:block;color:#92efc7;font-size:26px}canvas{display:block;width:min(78vw,360px);height:auto;margin:auto;background:#0f1e1a;border:2px solid #3b6c5e;border-radius:12px;touch-action:none}.row{display:flex;justify-content:center;gap:8px;margin:10px}.btn,.pad button{padding:9px 13px;color:white;background:#ffffff15;border:1px solid #ffffff30;border-radius:9px;font:inherit}.pad{display:grid;grid-template-columns:repeat(3,48px);gap:5px;justify-content:center}.pad button{padding:8px}.hint{color:#cfeadf;font-size:13px}</style><main><h1>🐍 贪吃蛇</h1><div class="hud"><span><b id="score">0</b>分数</span><span><b id="best">0</b>本局最佳</span></div><canvas id="board" width="360" height="360" aria-label="贪吃蛇棋盘"></canvas><div class="row"><button id="toggle" class="btn">开始游戏</button><button id="reset" class="btn">重新开始</button></div><div class="pad"><span></span><button data-dir="up">▲</button><span></span><button data-dir="left">◀</button><button data-dir="down">▼</button><button data-dir="right">▶</button></div><p class="hint">方向键 / WASD 或触屏按钮控制；空格暂停。</p></main><script>
+const canvas=document.getElementById('board'),ctx=canvas.getContext('2d'),N=18,C=20,scoreEl=document.getElementById('score'),bestEl=document.getElementById('best'),toggle=document.getElementById('toggle');let snake,dir,next,food,score,best=0,timer=null,paused=true,over=false;
+function placeFood(){do{food={x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)}}while(snake.some(p=>p.x===food.x&&p.y===food.y))}
+function draw(){ctx.fillStyle='#0f1e1a';ctx.fillRect(0,0,360,360);ctx.strokeStyle='#18352d';for(let i=0;i<=N;i++){ctx.beginPath();ctx.moveTo(i*C,0);ctx.lineTo(i*C,360);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i*C);ctx.lineTo(360,i*C);ctx.stroke()}ctx.fillStyle='#ffbd59';ctx.beginPath();ctx.arc(food.x*C+10,food.y*C+10,7,0,Math.PI*2);ctx.fill();snake.forEach((p,i)=>{ctx.fillStyle=i?'#45c997':'#a1ffd6';ctx.fillRect(p.x*C+2,p.y*C+2,16,16)});if(over){ctx.fillStyle='#0009';ctx.fillRect(0,0,360,360);ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font='bold 23px system-ui';ctx.fillText('游戏结束 · '+score+' 分',180,177)}}
+function reset(){clearInterval(timer);timer=null;snake=[{x:8,y:9},{x:7,y:9},{x:6,y:9}];dir={x:1,y:0};next={x:1,y:0};score=0;over=false;paused=true;scoreEl.textContent='0';toggle.textContent='开始游戏';placeFood();draw()}
+function start(){if(over)reset();if(timer){paused=!paused;toggle.textContent=paused?'继续':'暂停';return}paused=false;toggle.textContent='暂停';timer=setInterval(tick,125)}
+function tick(){if(paused)return;dir=next;const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y},eat=head.x===food.x&&head.y===food.y,body=eat?snake:snake.slice(0,-1);if(head.x<0||head.y<0||head.x>=N||head.y>=N||body.some(p=>p.x===head.x&&p.y===head.y)){clearInterval(timer);timer=null;over=true;paused=true;toggle.textContent='再来一局';draw();return}snake.unshift(head);if(eat){score+=10;scoreEl.textContent=score;if(score>best){best=score;bestEl.textContent=best}placeFood()}else snake.pop();draw()}
+const dirs={ArrowUp:{x:0,y:-1},w:{x:0,y:-1},ArrowDown:{x:0,y:1},s:{x:0,y:1},ArrowLeft:{x:-1,y:0},a:{x:-1,y:0},ArrowRight:{x:1,y:0},d:{x:1,y:0}};document.addEventListener('keydown',e=>{const d=dirs[e.key];if(d){e.preventDefault();if(d.x!==-dir.x||d.y!==-dir.y)next=d}else if(e.code==='Space'){e.preventDefault();start()}});document.querySelectorAll('[data-dir]').forEach(b=>b.onclick=()=>{const d={up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}}[b.dataset.dir];if(d.x!==-dir.x||d.y!==-dir.y)next=d});toggle.onclick=start;document.getElementById('reset').onclick=reset;reset();
+<\/script></html>`;
 
-          start.addEventListener("click", () => {
-            clearInterval(timer);
-            score = 0;
-            running = true;
-            scoreText.textContent = "0";
-            timeText.textContent = "10.0";
-            result.textContent = "加油，冲击更高分！";
-            target.disabled = false;
-            start.disabled = true;
-            endTime = performance.now() + 10000;
-            target.focus();
+    const game2048 = `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><style>*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at top,#403667,#0b1020 75%);color:#fff;font-family:system-ui,sans-serif;text-align:center}main{width:min(100%,460px);padding:16px}.top{display:flex;justify-content:space-between;align-items:center}.scores{display:flex;gap:7px}.score{background:#ffffff20;border-radius:8px;padding:5px 10px;color:#ddd}.score b{display:block;font-size:20px}.buttons{display:flex;gap:8px;margin:10px 0}.buttons button{flex:1}.btn{padding:9px;color:white;background:#7669df;border:0;border-radius:8px;font:inherit}.board{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:9px;background:#ffffff20;border-radius:12px;touch-action:none}.cell{aspect-ratio:1;display:grid;place-items:center;border-radius:8px;background:#ffffff12;font-size:clamp(22px,7vw,37px);font-weight:800;color:#26304a}.v0{color:transparent}.v2{background:#eee8db}.v4{background:#ebd9b6}.v8{background:#f3ad6d;color:white}.v16{background:#f28b5b;color:white}.v32{background:#f06e55;color:white}.v64{background:#ed513d;color:white}.v128,.v256,.v512{background:#edcf63;color:white;font-size:clamp(18px,5vw,28px)}.v1024,.v2048{background:#e5bf32;color:white;font-size:clamp(16px,4.5vw,24px)}.hint{color:#d9dbe8;font-size:13px;min-height:20px}button{cursor:pointer}</style><main><div class="top"><h1>🔢 2048</h1><div class="scores"><div class="score">分数<b id="score">0</b></div><div class="score">本局最佳<b id="best">0</b></div></div></div><div class="buttons"><button id="new" class="btn">新游戏</button><button id="undo" class="btn">↶ 撤销一步</button></div><div id="board" class="board" aria-label="2048游戏棋盘"></div><p id="message" class="hint">方向键 / WASD 或滑动屏幕，合并数字到达 2048！</p></main><script>
+const el=document.getElementById('board'),scoreEl=document.getElementById('score'),bestEl=document.getElementById('best'),message=document.getElementById('message');let grid,score=0,best=0,previous=null;
+function spawn(){const empty=[];grid.forEach((r,y)=>r.forEach((v,x)=>{if(!v)empty.push([y,x])}));if(!empty.length)return;const [y,x]=empty[Math.floor(Math.random()*empty.length)];grid[y][x]=Math.random()<.9?2:4}
+function render(){el.replaceChildren();grid.flat().forEach(v=>{const d=document.createElement('div');d.className='cell v'+Math.min(v,2048);d.textContent=v||'';el.appendChild(d)});scoreEl.textContent=score;bestEl.textContent=best}
+function init(){grid=Array.from({length:4},()=>[0,0,0,0]);score=0;previous=null;spawn();spawn();message.textContent='方向键 / WASD 或滑动屏幕，合并数字到达 2048！';render()}
+function hasMoves(){if(grid.some(r=>r.includes(0)))return true;for(let y=0;y<4;y++)for(let x=0;x<4;x++)if((x<3&&grid[y][x]===grid[y][x+1])||(y<3&&grid[y][x]===grid[y+1][x]))return true;return false}
+function move(dir){const before=grid.map(r=>r.slice()),oldScore=score;function compress(line){let a=line.filter(Boolean),out=[];for(let i=0;i<a.length;i++){if(a[i]===a[i+1]){out.push(a[i]*2);score+=a[i]*2;i++}else out.push(a[i])}while(out.length<4)out.push(0);return out}
+if(dir==='left'||dir==='right'){for(let y=0;y<4;y++){let line=grid[y].slice();if(dir==='right')line.reverse();line=compress(line);if(dir==='right')line.reverse();grid[y]=line}}else{for(let x=0;x<4;x++){let line=grid.map(r=>r[x]);if(dir==='down')line.reverse();line=compress(line);if(dir==='down')line.reverse();for(let y=0;y<4;y++)grid[y][x]=line[y]}}
+if(JSON.stringify(before)===JSON.stringify(grid)){score=oldScore;return}previous={grid:before,score:oldScore};spawn();if(score>best)best=score;render();if(grid.flat().includes(2048))message.textContent='🎉 2048 达成！还可以继续挑战更高分。';else if(!hasMoves())message.textContent='棋盘已满，没有可合并的方块。点击新游戏重新开始。'}
+function undo(){if(!previous)return;grid=previous.grid;score=previous.score;previous=null;message.textContent='已撤销上一步。';render()}
+document.addEventListener('keydown',e=>{const map={ArrowLeft:'left',a:'left',ArrowRight:'right',d:'right',ArrowUp:'up',w:'up',ArrowDown:'down',s:'down'};if(map[e.key]){e.preventDefault();move(map[e.key])}});let sx=null,sy=null;el.addEventListener('touchstart',e=>{const t=e.changedTouches[0];sx=t.clientX;sy=t.clientY},{passive:true});el.addEventListener('touchend',e=>{if(sx===null)return;const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(Math.max(Math.abs(dx),Math.abs(dy))>24)move(Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up'));sx=sy=null},{passive:true});document.getElementById('new').onclick=init;document.getElementById('undo').onclick=undo;init();
+<\/script></html>`;
 
-            timer = setInterval(() => {
-              const remaining = Math.max(0, endTime - performance.now());
-              timeText.textContent = (remaining / 1000).toFixed(1);
-              if (remaining === 0) finish();
-            }, 30);
-          });
+    const memoryGame = `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at top,#2d2a5d,#0b1020 75%);color:white;font-family:system-ui,sans-serif;text-align:center}main{width:min(100%,520px);padding:15px}h1{margin:0}.stats{display:flex;justify-content:center;gap:20px;margin:12px;color:#ddd6ff}.stats b{display:block;font-size:24px;color:#c4b6ff}.levels{display:flex;justify-content:center;gap:7px;margin:10px}.levels button,.reset{padding:8px 12px;color:white;background:#ffffff12;border:1px solid #ffffff30;border-radius:9px;font:inherit}.levels .selected{background:#7568da}.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.card{height:clamp(58px,16vw,88px);color:white;background:linear-gradient(135deg,#7c6dec,#4f76ff);border:0;border-radius:13px;font-size:clamp(25px,7vw,38px)}.card.open,.card.done{color:#202344;background:linear-gradient(135deg,#e5e9ff,#bbcaff)}.card.done{opacity:.55}.card:disabled{cursor:default}.reset{margin:12px}.hint{min-height:18px;color:#c1c4d9;font-size:13px}</style><main><h1>🧠 记忆翻牌</h1><div class="stats"><span><b id="moves">0</b>步数</span><span><b id="time">0</b>秒</span><span><b id="pairs">0/8</b>配对</span></div><div class="levels"><button data-level="6">轻松</button><button class="selected" data-level="8">标准</button><button data-level="10">挑战</button></div><div id="board" class="board"></div><button id="reset" class="reset">重新洗牌</button><p id="hint" class="hint">翻开两张牌，找到所有相同图案。</p></main><script>
+const icons=['🍉','🍋','🍒','🍇','🍊','🍎','🍓','🥝','🍍','🥑'],board=document.getElementById('board');let level=8,opened=[],moves=0,matched=0,seconds=0,timer=null,locked=false,started=false;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function setup(){clearInterval(timer);timer=null;opened=[];moves=0;matched=0;seconds=0;locked=false;started=false;document.getElementById('moves').textContent='0';document.getElementById('time').textContent='0';document.getElementById('pairs').textContent='0/'+level;document.getElementById('hint').textContent='翻开两张牌，找到所有相同图案。';board.style.gridTemplateColumns=level===10?'repeat(5,minmax(0,1fr))':'repeat(4,minmax(0,1fr))';board.replaceChildren();shuffle(icons.slice(0,level).concat(icons.slice(0,level))).forEach(icon=>{const b=document.createElement('button');b.className='card';b.textContent='?';b.setAttribute('aria-label','隐藏卡片');b.onclick=()=>flip(b,icon);board.appendChild(b)})}
+function flip(button,icon){if(locked||button.classList.contains('open')||button.classList.contains('done'))return;if(!started){started=true;timer=setInterval(()=>{seconds++;document.getElementById('time').textContent=seconds},1000)}button.classList.add('open');button.textContent=icon;opened.push({button,icon});if(opened.length<2)return;moves++;document.getElementById('moves').textContent=moves;const [a,b]=opened;if(a.icon===b.icon){a.button.classList.add('done');b.button.classList.add('done');a.button.disabled=b.button.disabled=true;matched++;document.getElementById('pairs').textContent=matched+'/'+level;opened=[];if(matched===level){clearInterval(timer);document.getElementById('hint').textContent='🎉 配对成功！用时 '+seconds+' 秒，共 '+moves+' 步。'}}else{locked=true;setTimeout(()=>{for(const item of opened){item.button.classList.remove('open');item.button.textContent='?'}opened=[];locked=false},700)}}
+document.querySelectorAll('[data-level]').forEach(b=>b.onclick=()=>{level=Number(b.dataset.level);document.querySelectorAll('[data-level]').forEach(x=>x.classList.toggle('selected',x===b));setup()});document.getElementById('reset').onclick=setup;setup();
+<\/script></html>`;
 
-          target.addEventListener("click", () => {
-            if (!running) return;
-            if (performance.now() >= endTime) {
-              finish();
-              return;
-            }
-            scoreText.textContent = ++score;
-          });
-        <\/script>
-      </body>
-      </html>
-    `;
-
-    const snakeGame = `
-      <!DOCTYPE html>
-      <html lang="zh-CN">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
-          * { box-sizing: border-box; }
-          body {
-            margin: 0; min-height: 100vh; display: grid; place-items: center; text-align: center;
-            color: white; background: radial-gradient(circle at top, #17392f, #0b1020 70%);
-            font-family: system-ui, sans-serif;
-          }
-          main { width: min(100%, 480px); padding: 16px; }
-          h1 { margin-bottom: 10px; }
-          .hud {
-            display: flex; justify-content: center; gap: 20px; margin: 16px 0; color: #d3f5e6; font-size: 14px;
-          }
-          .hud strong { display: block; color: #92efc7; font-size: 28px; }
-          canvas {
-            display: block; width: min(82vw, 360px); height: auto; margin: auto; background: #0f1e1a; border: 2px solid #3b6c5e; border-radius: 12px;
-          }
-          .row { display: flex; justify-content: center; gap: 10px; margin-top: 14px; }
-          .button {
-            padding: 9px 14px; color: white; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); border-radius: 10px; font: inherit;
-          }
-          .pad {
-            display: grid; grid-template-columns: repeat(3, 52px); gap: 6px; justify-content: center; margin-top: 12px;
-          }
-          .pad button { padding: 10px; color: white; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); border-radius: 10px; }
-          .hint { color: #cfeadf; font-size: 13px; margin-top: 10px; }
-        </style>
-      </head>
-      <body>
-        <main>
-          <h1>🐍 贪吃蛇</h1>
-          <div class="hud">
-            <div><strong id="score">0</strong>分数</div>
-            <div><strong id="best">0</strong>最佳</div>
-          </div>
-          <canvas id="board" width="360" height="360" aria-label="贪吃蛇游戏区域"></canvas>
-          <div class="row">
-            <button id="toggle" class="button" type="button">开始游戏</button>
-            <button id="reset" class="button" type="button">重新开始</button>
-          </div>
-          <div class="pad">
-            <span></span>
-            <button type="button" data-dir="up">▲</button>
-            <span></span>
-            <button type="button" data-dir="left">◀</button>
-            <button type="button" data-dir="down">▼</button>
-            <button type="button" data-dir="right">▶</button>
-          </div>
-          <div class="hint">方向键 / WASD 或触屏按钮控制；空格可暂停。</div>
-        </main>
-        <script>
-          const canvas = document.getElementById("board");
-          const ctx = canvas.getContext("2d");
-          const scoreEl = document.getElementById("score");
-          const bestEl = document.getElementById("best");
-          const toggle = document.getElementById("toggle");
-          const grid = 18;
-          const cell = canvas.width / grid;
-
-          let snake = [{ x: 8, y: 9 }, { x: 7, y: 9 }, { x: 6, y: 9 }];
-          let dir = { x: 1, y: 0 };
-          let nextDir = { x: 1, y: 0 };
-          let food = { x: 12, y: 9 };
-          let score = 0;
-          let best = Number(localStorage.getItem("snakeBest") || 0);
-          let timer = null;
-          let paused = true;
-          let gameOver = false;
-
-          bestEl.textContent = best;
-
-          function randomFood() {
-            let x; let y;
-            do {
-              x = Math.floor(Math.random() * grid);
-              y = Math.floor(Math.random() * grid);
-            } while (snake.some(seg => seg.x === x && seg.y === y));
-            food = { x, y };
-          }
-
-          function draw() {
-            ctx.fillStyle = "#0f1e1a";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.strokeStyle = "#18352d";
-            for (let i = 0; i <= grid; i++) {
-              ctx.beginPath(); ctx.moveTo(i * cell, 0); ctx.lineTo(i * cell, canvas.height); ctx.stroke();
-              ctx.beginPath(); ctx.moveTo(0, i * cell); ctx.lineTo(canvas.width, i * cell); ctx.stroke();
-            }
-
-            ctx.fillStyle = "#ffbd59";
-            ctx.fillRect(food.x * cell + 4, food.y * cell + 4, cell - 8, cell - 8);
-
-            snake.forEach((seg, index) => {
-              ctx.fillStyle = index === 0 ? "#a1ffd6" : "#45c997";
-              ctx.fillRect(seg.x * cell + 2, seg.y * cell + 2, cell - 4, cell - 4);
-            });
-
-            if (gameOver) {
-              ctx.fillStyle = "#0009";
-              ctx.fillRect(0, 0, canvas.width, canvas.height);
-              ctx.fillStyle = "white";
-              ctx.font = "bold 24px sans-serif";
-              ctx.textAlign = "center";
-              ctx.fillText("游戏结束 · " + score + " 分", canvas.width / 2, canvas.height / 2 - 10);
-            }
-          }
-
-          function reset() {
-            clearInterval(timer);
-            timer = null;
-            snake = [{ x: 8, y: 9 }, { x: 7, y: 9 }, { x: 6, y: 9 }];
-            dir = { x: 1, y: 0 };
-            nextDir = { x: 1, y: 0 };
-            score = 0;
-            gameOver = false;
-            paused = true;
-            scoreEl.textContent = "0";
-            toggle.textContent = "开始游戏";
-            randomFood();
-            draw();
-          }
-
-          function start() {
-            if (gameOver) {
-              reset();
-            }
-            if (timer) {
-              paused = !paused;
-              toggle.textContent = paused ? "继续" : "暂停";
-              return;
-            }
-            paused = false;
-            toggle.textContent = "暂停";
-            timer = setInterval(tick, 125);
-          }
-
-          function tick() {
-            if (paused) return;
-            dir = nextDir;
-            const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
-            const willEat = head.x === food.x && head.y === food.y;
-            const body = willEat ? snake : snake.slice(0, -1);
-
-            if (head.x < 0 || head.y < 0 || head.x >= grid || head.y >= grid || body.some(seg => seg.x === head.x && seg.y === head.y)) {
-              clearInterval(timer);
-              timer = null;
-              gameOver = true;
-              paused = true;
-              toggle.textContent = "再来一局";
-              if (score > best) {
-                best = score;
-                localStorage.setItem("snakeBest", String(best));
-                bestEl.textContent = best;
-              }
-              draw();
-              return;
-            }
-
-            snake.unshift(head);
-            if (willEat) {
-              score += 10;
-              scoreEl.textContent = score;
-              randomFood();
-            } else {
-              snake.pop();
-            }
-            draw();
-          }
-
-          document.getElementById("toggle").addEventListener("click", start);
-          document.getElementById("reset").addEventListener("click", reset);
-
-          document.addEventListener("keydown", (event) => {
-            const map = {
-              ArrowUp: { x: 0, y: -1 },
-              ArrowDown: { x: 0, y: 1 },
-              ArrowLeft: { x: -1, y: 0 },
-              ArrowRight: { x: 1, y: 0 },
-              w: { x: 0, y: -1 },
-              s: { x: 0, y: 1 },
-              a: { x: -1, y: 0 },
-              d: { x: 1, y: 0 }
-            };
-            const newDir = map[event.key];
-            if (!newDir) {
-              if (event.code === "Space") { event.preventDefault(); start(); }
-              return;
-            }
-            if (newDir.x !== -dir.x || newDir.y !== -dir.y) {
-              nextDir = newDir;
-            }
-          });
-
-          document.querySelectorAll("[data-dir]").forEach(button => {
-            button.addEventListener("click", () => {
-              const m = {
-                up: { x: 0, y: -1 },
-                down: { x: 0, y: 1 },
-                left: { x: -1, y: 0 },
-                right: { x: 1, y: 0 }
-              }[button.dataset.dir];
-              if (m.x !== -dir.x || m.y !== -dir.y) nextDir = m;
-            });
-          });
-
-          reset();
-        <\/script>
-      </body>
-      </html>
-    `;
-
-    const memoryGame = `
-      <!DOCTYPE html>
-      <html lang="zh-CN">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <style>
-          * { box-sizing: border-box; }
-          body {
-            margin: 0; min-height: 100vh; display: grid; place-items: center; color: white; background: radial-gradient(circle at top, #2d2a5d, #0b1020 75%);
-            font-family: system-ui, sans-serif; text-align: center;
-          }
-          main { width: min(100%, 520px); padding: 16px; }
-          h1 { margin: 0; }
-          .stats {
-            display: flex; justify-content: center; gap: 18px; margin: 12px 0 18px; color: #ddd6ff; font-size: 14px;
-          }
-          .stats strong { display: block; font-size: 26px; color: #c4b6ff; }
-          .board {
-            display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px;
-          }
-          .card {
-            height: 88px; color: white; background: linear-gradient(135deg, #7c6dec, #4f76ff); border: 0; border-radius: 14px; font-size: 32px; cursor: pointer; box-shadow: 0 10px 30px rgba(109,91,220,.25);
-          }
-          .card.open, .card.done {
-            color: #1b2140; background: linear-gradient(135deg, #dfe8ff, #c5d3ff);
-          }
-          .card.done { opacity: .8; }
-          button { font: inherit; }
-          .reset { margin-top: 14px; padding: 10px 18px; color: white; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.24); border-radius: 10px; }
-        </style>
-      </head>
-      <body>
-        <main>
-          <h1>🧠 记忆翻牌</h1>
-          <div class="stats">
-            <div><strong id="moves">0</strong>步数</div>
-            <div><strong id="time">0</strong>秒</div>
-            <div><strong id="pairs">0/8</strong>配对</div>
-          </div>
-          <div id="board" class="board"></div>
-          <button class="reset" id="resetBtn" type="button">重新开始</button>
-        </main>
-        <script>
-          const board = document.getElementById("board");
-          const movesEl = document.getElementById("moves");
-          const timeEl = document.getElementById("time");
-          const pairsEl = document.getElementById("pairs");
-          const resetBtn = document.getElementById("resetBtn");
-          const icons = ["🍉", "🍋", "🍒", "🍇", "🍊", "🍎", "🍓", "🥝"];
-
-          let cards = [];
-          let opened = [];
-          let moves = 0;
-          let matched = 0;
-          let seconds = 0;
-          let timer = null;
-          let locked = false;
-
-          function shuffle(arr) {
-            const copy = [...arr];
-            for (let i = copy.length - 1; i > 0; i--) {
-              const j = Math.floor(Math.random() * (i + 1));
-              [copy[i], copy[j]] = [copy[j], copy[i]];
-            }
-            return copy;
-          }
-
-          function startTimer() {
-            if (timer) return;
-            timer = setInterval(() => {
-              seconds += 1;
-              timeEl.textContent = seconds;
-            }, 1000);
-          }
-
-          function stopTimer() {
-            clearInterval(timer);
-            timer = null;
-          }
-
-          function buildBoard() {
-            const values = shuffle([...icons, ...icons]);
-            board.replaceChildren();
-            cards = values.map((icon) => {
-              const btn = document.createElement("button");
-              btn.type = "button";
-              btn.className = "card";
-              btn.textContent = "?";
-              btn.addEventListener("click", () => {
-                if (locked || btn.classList.contains("open") || btn.classList.contains("done")) return;
-                startTimer();
-                btn.classList.add("open");
-                btn.textContent = icon;
-                opened.push({ btn, icon });
-
-                if (opened.length !== 2) return;
-                moves += 1;
-                movesEl.textContent = moves;
-
-                const [first, second] = opened;
-                if (first.icon === second.icon) {
-                  first.btn.classList.add("done");
-                  second.btn.classList.add("done");
-                  matched += 1;
-                  pairsEl.textContent = matched + "/8";
-                  opened = [];
-                  if (matched === 8) {
-                    stopTimer();
-                    setTimeout(() => alert("通关成功！用时 " + seconds + " 秒，步数 " + moves + "。"), 150);
-                  }
-                } else {
-                  locked = true;
-                  setTimeout(() => {
-                    first.btn.classList.remove("open");
-                    second.btn.classList.remove("open");
-                    first.btn.textContent = "?";
-                    second.btn.textContent = "?";
-                    opened = [];
-                    locked = false;
-                  }, 650);
-                }
-              });
-              return btn;
-            });
-            cards.forEach(card => board.appendChild(card));
-          }
-
-          function resetGame() {
-            stopTimer();
-            opened = [];
-            moves = 0;
-            matched = 0;
-            seconds = 0;
-            locked = false;
-            movesEl.textContent = "0";
-            timeEl.textContent = "0";
-            pairsEl.textContent = "0/8";
-            buildBoard();
-          }
-
-          resetBtn.addEventListener("click", resetGame);
-          resetGame();
-        <\/script>
-      </body>
-      </html>
-    `;
-
-    const typingGame = `
-      <!DOCTYPE html>
-      <html lang="zh-CN">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
-          * { box-sizing: border-box; }
-          body {
-            margin: 0; min-height: 100vh; display: grid; place-items: center; text-align: center; color: white;
-            background: linear-gradient(180deg, #1a2949, #0b1020 75%); font-family: system-ui, sans-serif;
-          }
-          main { width: min(100%, 540px); padding: 20px; }
-          h1 { font-size: 30px; margin-bottom: 10px; }
-          .hud {
-            display: flex; justify-content: center; gap: 22px; margin: 12px 0 18px; color: #cfd9ff; font-size: 14px;
-          }
-          .hud strong { display: block; font-size: 28px; color: #b8c9ff; }
-          .panel {
-            padding: 18px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); border-radius: 16px;
-          }
-          .word { font-size: clamp(30px, 8vw, 52px); letter-spacing: 2px; margin: 12px 0; }
-          .word span { color: #6ee7b7; }
-          .word i { color: #ff8585; font-style: normal; text-decoration: underline; }
-          input {
-            width: min(100%, 360px); padding: 14px; color: white; background: #0d1530; border: 1px solid rgba(138,160,255,.7); border-radius: 10px; font-size: 20px; text-align: center;
-          }
-          .row { display: flex; gap: 8px; justify-content: center; margin: 12px 0; }
-          button { padding: 10px 18px; color: white; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.24); border-radius: 9px; font: inherit; }
-          .status { min-height: 26px; color: #dfe5ff; font-size: 14px; }
-          .hint { margin-top: 12px; color: #a8b7d9; font-size: 13px; }
-        </style>
-      </head>
-      <body>
-        <main>
-          <h1>⌨️ 打字挑战</h1>
-          <div class="hud">
-            <div><strong id="score">0</strong>得分</div>
-            <div><strong id="time">30</strong>秒</div>
-            <div><strong id="combo">0</strong>连击</div>
-          </div>
-          <div class="panel">
-            <div id="word" class="word">准备开始</div>
-            <input id="input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="点开始后输入单词" aria-label="输入显示的单词" disabled>
-            <div class="row">
-              <button id="start" type="button">开始挑战</button>
-              <button id="reset" type="button">重置</button>
-            </div>
-            <div id="status" class="status">30 秒内尽可能准确地输入单词。</div>
-          </div>
-          <div class="hint">正确输入可得分，连续答对会累积连击奖励。</div>
-        </main>
-        <script>
-          const words = ["pixel","game","snake","rocket","puzzle","happy","focus","button","music","dream","planet","maple","forest","swift","score","combo","magic","castle","jump","purple","garden","summer","window","silver","orange","rabbit","camera","dragon","piano","flower","coffee","friend","future","yellow","little","bridge","winter","cookie","shadow","thunder"];
-          const wordEl = document.getElementById("word");
-          const inputEl = document.getElementById("input");
-          const scoreEl = document.getElementById("score");
-          const timeEl = document.getElementById("time");
-          const comboEl = document.getElementById("combo");
-          const statusEl = document.getElementById("status");
-          let score = 0;
-          let time = 30;
-          let combo = 0;
-          let target = "";
-          let timer = null;
-          let running = false;
-          let previous = "";
-
-          function makeWordHtml(value, typed) {
-            let html = "";
-            for (let i = 0; i < value.length; i++) {
-              const ch = value[i];
-              if (i < typed.length) {
-                html += typed[i] === ch ? "<span>" + ch + "</span>" : "<i>" + ch + "</i>";
-              } else {
-                html += "<span style=\"color:#e4ebff\">" + ch + "</span>";
-              }
-            }
-            return html;
-          }
-
-          function nextWord() {
-            const options = words.filter(w => w !== previous);
-            target = options[Math.floor(Math.random() * options.length)];
-            previous = target;
-            wordEl.innerHTML = makeWordHtml(target, inputEl.value);
-          }
-
-          function stopGame() {
-            clearInterval(timer);
-            timer = null;
-            running = false;
-            inputEl.disabled = true;
-            statusEl.textContent = "时间到！本轮得分为 " + score + "，最高连击 " + combo + "。";
-          }
-
-          function startGame() {
-            clearInterval(timer);
-            score = 0; time = 30; combo = 0; running = true;
-            scoreEl.textContent = "0"; timeEl.textContent = "30"; comboEl.textContent = "0";
-            inputEl.disabled = false; inputEl.value = "";
-            statusEl.textContent = "开始冲刺！";
-            const startButton = document.getElementById("start");
-            startButton.textContent = "挑战中…";
-            startButton.disabled = true;
-            nextWord();
-            inputEl.focus();
-            timer = setInterval(() => {
-              time -= 1;
-              timeEl.textContent = String(time);
-              if (time <= 0) stopGame();
-            }, 1000);
-          }
-
-          inputEl.addEventListener("input", () => {
-            if (!running) return;
-            const typed = inputEl.value.toLowerCase();
-            wordEl.innerHTML = makeWordHtml(target, typed);
-            if (typed === target) {
-              combo += 1;
-              score += 1 + (combo % 5 === 0 ? 2 : 0);
-              scoreEl.textContent = String(score);
-              comboEl.textContent = String(combo);
-              statusEl.textContent = combo % 5 === 0 ? "连击奖励 +3！继续保持！" : "正确！继续冲刺";
-              inputEl.value = "";
-              nextWord();
-            }
-          });
-
-          document.getElementById("start").addEventListener("click", startGame);
-          document.getElementById("reset").addEventListener("click", () => {
-            clearInterval(timer);
-            score = 0; time = 30; combo = 0; running = false;
-            scoreEl.textContent = "0"; timeEl.textContent = "30"; comboEl.textContent = "0";
-            inputEl.disabled = true; inputEl.value = ""; wordEl.textContent = "准备开始"; statusEl.textContent = "30 秒内尽可能准确地输入单词。";
-            const startButton = document.getElementById("start");
-            startButton.disabled = false; startButton.textContent = "开始挑战";
-          });
-        <\/script>
-      </body>
-      </html>
-    `;
+    const typingGame = `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;color:white;background:linear-gradient(180deg,#1a2949,#0b1020 75%);font-family:system-ui,sans-serif;text-align:center}main{width:min(100%,540px);padding:18px}.hud{display:flex;justify-content:center;gap:22px;margin:12px}.hud b{display:block;font-size:27px;color:#b8c9ff}.panel{padding:18px;background:#ffffff0c;border:1px solid #ffffff20;border-radius:16px}.word{font-size:clamp(30px,8vw,52px);letter-spacing:2px;margin:12px}.word .good{color:#6ee7b7}.word .bad{color:#ff8585;text-decoration:underline}input{width:min(100%,360px);padding:13px;color:white;background:#0d1530;border:1px solid #8aa0ff77;border-radius:10px;font-size:20px;text-align:center}.row{display:flex;justify-content:center;gap:8px;margin:12px}.row button{padding:9px 16px;color:white;background:#ffffff18;border:1px solid #ffffff30;border-radius:9px;font:inherit}.status{min-height:24px;color:#dfe5ff}.hint{color:#a8b7d9;font-size:13px}</style><main><h1>⌨️ 打字挑战</h1><div class="hud"><span><b id="score">0</b>得分</span><span><b id="time">30</b>秒</span><span><b id="combo">0</b>连击</span></div><section class="panel"><div id="word" class="word">准备开始</div><input id="input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="点击开始后输入单词" aria-label="输入单词" disabled><div class="row"><button id="start">开始挑战</button><button id="reset">重置</button></div><div id="status" class="status">30 秒内尽可能准确地输入单词。</div></section><p class="hint">每 5 次连续答对会获得额外分数。</p></main><script>
+const words=['pixel','game','snake','rocket','puzzle','happy','focus','button','music','dream','planet','maple','forest','swift','score','combo','magic','castle','jump','purple','garden','summer','window','silver','orange','rabbit','camera','dragon','piano','flower','coffee','friend','future','yellow','little','bridge','winter','cookie','shadow','thunder'],wordEl=document.getElementById('word'),input=document.getElementById('input'),scoreEl=document.getElementById('score'),timeEl=document.getElementById('time'),comboEl=document.getElementById('combo'),statusEl=document.getElementById('status');let score=0,time=30,combo=0,target='',timer=null,running=false,last='';
+function showWord(){const val=input.value.toLowerCase();wordEl.replaceChildren();for(let i=0;i<target.length;i++){const span=document.createElement('span');span.textContent=target[i];if(i<val.length)span.className=val[i]===target[i]?'good':'bad';wordEl.appendChild(span)}}
+function nextWord(){let options=words.filter(w=>w!==last);target=options[Math.floor(Math.random()*options.length)];last=target;showWord()}
+function finish(){clearInterval(timer);timer=null;running=false;input.disabled=true;document.getElementById('start').disabled=false;document.getElementById('start').textContent='再来一次';statusEl.textContent='时间到！得分 '+score+'，连击 '+combo+'。'}
+function start(){clearInterval(timer);score=0;time=30;combo=0;running=true;last='';scoreEl.textContent='0';timeEl.textContent='30';comboEl.textContent='0';input.disabled=false;input.value='';statusEl.textContent='开始冲刺！';document.getElementById('start').disabled=true;document.getElementById('start').textContent='挑战中…';nextWord();input.focus();timer=setInterval(()=>{time--;timeEl.textContent=time;if(time<=0)finish()},1000)}
+input.addEventListener('input',()=>{if(!running)return;showWord();if(input.value.trim().toLowerCase()===target){combo++;score+=combo%5===0?3:1;scoreEl.textContent=score;comboEl.textContent=combo;statusEl.textContent=combo%5===0?'连击奖励！继续保持':'正确！继续冲刺';input.value='';nextWord()}});document.getElementById('start').onclick=start;document.getElementById('reset').onclick=()=>{clearInterval(timer);timer=null;score=0;time=30;combo=0;running=false;input.disabled=true;input.value='';scoreEl.textContent='0';timeEl.textContent='30';comboEl.textContent='0';wordEl.textContent='准备开始';statusEl.textContent='30 秒内尽可能准确地输入单词。';document.getElementById('start').disabled=false;document.getElementById('start').textContent='开始挑战'};
+<\/script></html>`;
 
     const games = [
-      { id: "click", title: "极速点击", category: "休闲", description: "十秒钟的手速挑战，看看你能点击多少次！", emoji: "⚡", color: "linear-gradient(135deg, #6242a6, #29234b)", html: clickGame },
-      { id: "snake", title: "贪吃蛇", category: "街机", description: "掌握方向，吃到食物并尽量避免撞墙和撞到自己。", emoji: "🐍", color: "linear-gradient(135deg, #1b7a5c, #17343d)", html: snakeGame },
-      { id: "2048", title: "数字 2048", category: "益智", description: "合并相同数字，争取拼出更大的数值。", emoji: "🔢", color: "linear-gradient(135deg, #8066cc, #342c62)", html: `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at top,#403667,#0b1020 75%);color:#fff;font-family:system-ui,sans-serif;text-align:center}main{width:min(100%,460px);padding:18px}.top{display:flex;justify-content:space-between;align-items:center}.scores{display:flex;gap:8px}.score{background:rgba(255,255,255,.12);border-radius:8px;padding:5px 12px;color:#ddd}.score b{display:block;font-size:20px}.btn{padding:10px;color:white;background:#8b7cff;border:0;border-radius:8px;font:inherit}.buttons{display:flex;gap:8px;margin:10px 0}.buttons button{flex:1}.board{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px;background:rgba(255,255,255,.12);border-radius:12px;touch-action:none}.cell{aspect-ratio:1;display:grid;place-items:center;border-radius:8px;background:rgba(255,255,255,.12);font-size:clamp(24px,7vw,36px);font-weight:800}.v0{color:transparent}.v2{background:#eee8db}.v4{background:#ebd9b6}.v8{background:#f3ad6d;color:white}.v16{background:#f28b5b;color:white}.v32{background:#f06e55;color:white}.v64{background:#ed513d;color:white}.v128,.v256,.v512{background:#edcf63;color:white;font-size:clamp(20px,6vw,26px)}.v1024,.v2048{background:#e5bf32;color:white;font-size:clamp(17px,5vw,24px)}.hint{color:#d9dbe8;font-size:13px}button{cursor:pointer}</style></head><body><main><div class="top"><h1>🔢 2048</h1><div class="scores"><div class="score">分数<b id="score">0</b></div><div class="score">最佳<b id="best">0</b></div></div></div><div class="buttons"><button id="new" class="btn" type="button">新游戏</button><button id="undo" class="btn" type="button">↶ 撤销</button></div><div id="board" class="board"></div><p id="message" class="hint">方向键 / WASD 或滑动屏幕进行合并。</p></main><script>
-const boardEl = document.getElementById('board');
-const scoreEl = document.getElementById('score');
-const bestEl = document.getElementById('best');
-const messageEl = document.getElementById('message');
-let board = [ [0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0] ];
-let score = 0;
-let best = Number(localStorage.getItem('best2048') || 0);
-let prev = null;
-
-function spawnRandom() {
-  const empty = [];
-  board.forEach((row,y) => row.forEach((cell,x) => { if (!cell) empty.push([y,x]); }));
-  if (!empty.length) return;
-  const [y,x] = empty[Math.floor(Math.random() * empty.length)];
-  board[y][x] = Math.random() < 0.9 ? 2 : 4;
-}
-
-function render() {
-  boardEl.replaceChildren();
-  board.flat().forEach(value => {
-    const cell = document.createElement('div');
-    cell.className = 'cell v' + (value || 0);
-    cell.textContent = value || '';
-    boardEl.appendChild(cell);
-  });
-  scoreEl.textContent = score;
-  bestEl.textContent = best;
-}
-
-function init() {
-  board = [ [0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0] ];
-  score = 0;
-  prev = null;
-  spawnRandom(); spawnRandom();
-  render();
-  messageEl.textContent = '方向键 / WASD 或滑动屏幕，合并相同数字到达 2048！';
-}
-
-function snapshot() {
-  prev = { board: JSON.parse(JSON.stringify(board)), score };
-}
-
-function move(direction) {
-  const before = JSON.stringify(board);
-  const beforeScore = score;
-  const lineMap = {
-    left: (row) => row,
-    right: (row) => [...row].reverse(),
-    up: (col) => board.map(r => r[col]),
-    down: (col) => board.map(r => r[col]).reverse()
-  };
-
-  const applyLine = (line) => {
-    const values = line.filter(Boolean);
-    const merged = [];
-    for (let i = 0; i < values.length; i++) {
-      if (values[i] === values[i + 1]) {
-        const total = values[i] * 2;
-        merged.push(total);
-        score += total;
-        i++;
-      } else {
-        merged.push(values[i]);
-      }
-    }
-    while (merged.length < 4) merged.push(0);
-    return merged;
-  };
-
-  if (direction === 'left' || direction === 'right') {
-    for (let y = 0; y < 4; y++) {
-      let row = [...board[y]];
-      const line = direction === 'left' ? row : [...row].reverse();
-      const result = applyLine(line);
-      board[y] = direction === 'left' ? result : [...result].reverse();
-    }
-  } else {
-    for (let x = 0; x < 4; x++) {
-      let column = board.map(row => row[x]);
-      const line = direction === 'up' ? column : [...column].reverse();
-      const result = applyLine(line);
-      for (let y = 0; y < 4; y++) {
-        board[y][x] = direction === 'up' ? result[y] : [...result].reverse()[y];
-      }
-    }
-  }
-
-  if (JSON.stringify(board) === before) {
-    score = beforeScore;
-    return;
-  }
-
-  snapshot();
-  spawnRandom();
-  if (score > best) {
-    best = score;
-    localStorage.setItem('best2048', String(best));
-  }
-
-  render();
-
-  const full = board.flat().every(v => v !== 0);
-  const canMove = board.some((row, y) => row.some((cell, x) => {
-    if (x < 3 && cell && cell === board[y][x + 1]) return true;
-    if (y < 3 && cell && cell === board[y + 1][x]) return true;
-    return false;
-  }));
-
-  if (board.flat().includes(2048)) {
-    messageEl.textContent = '🎉 2048 达成！继续挑战更高分吧。';
-  } else if (full && !canMove) {
-    messageEl.textContent = '棋盘已满，但没有可合并的数字。点击新游戏再试一次。';
-  }
-}
-
-function undo() {
-  if (!prev) return;
-  board = prev.board;
-  score = prev.score;
-  prev = null;
-  render();
-}
-
-document.addEventListener('keydown', (event) => {
-  const map = {
-    ArrowLeft: 'left', a: 'left',
-    ArrowRight: 'right', d: 'right',
-    ArrowUp: 'up', w: 'up',
-    ArrowDown: 'down', s: 'down'
-  };
-  if (map[event.key]) {
-    event.preventDefault();
-    move(map[event.key]);
-  }
-});
-
-let startX = null; let startY = null;
-boardEl.addEventListener('touchstart', (event) => {
-  const touch = event.changedTouches[0];
-  startX = touch.clientX; startY = touch.clientY;
-}, { passive: true });
-boardEl.addEventListener('touchend', (event) => {
-  if (startX === null || startY === null) return;
-  const touch = event.changedTouches[0];
-  const dx = touch.clientX - startX;
-  const dy = touch.clientY - startY;
-  if (Math.max(Math.abs(dx), Math.abs(dy)) < 25) return;
-  if (Math.abs(dx) > Math.abs(dy)) move(dx > 0 ? 'right' : 'left');
-  else move(dy > 0 ? 'down' : 'up');
-  startX = startY = null;
-}, { passive: true });
-
-document.getElementById('new').addEventListener('click', init);
-document.getElementById('undo').addEventListener('click', undo);
-init();
-<\/script></body></html>` },
-      { id: "memory", title: "记忆翻牌", category: "益智", description: "翻开两张牌并找到所有配对，测试你的记忆力。", emoji: "🧠", color: "linear-gradient(135deg, #4d6bd8, #2b274b)", html: memoryGame },
-      { id: "typing", title: "打字挑战", category: "休闲", description: "30 秒内输入正确单词，尽量获得更高分数。", emoji: "⌨️", color: "linear-gradient(135deg, #255b9a, #1c2248)", html: typingGame }
+      { id: 'click', title: '极速点击', category: '休闲', description: '10 秒挑战手速，支持成绩结算和本局最佳记录。', emoji: '⚡', color: 'linear-gradient(135deg,#6242a6,#29234b)', html: clickGame },
+      { id: 'snake', title: '贪吃蛇', category: '街机', description: '键盘或触屏控制方向，包含暂停、重开、碰撞和得分。', emoji: '🐍', color: 'linear-gradient(135deg,#1b7a5c,#17343d)', html: snakeGame },
+      { id: '2048', title: '数字 2048', category: '益智', description: '键盘或滑动合并数字，支持撤销一步和胜负提示。', emoji: '🔢', color: 'linear-gradient(135deg,#8066cc,#342c62)', html: game2048 },
+      { id: 'memory', title: '记忆翻牌', category: '益智', description: '轻松、标准、挑战三种难度，统计步数和用时。', emoji: '🧠', color: 'linear-gradient(135deg,#4d6bd8,#2b274b)', html: memoryGame },
+      { id: 'typing', title: '打字挑战', category: '休闲', description: '30 秒限时打字，实时反馈、连击计数和额外奖励。', emoji: '⌨️', color: 'linear-gradient(135deg,#255b9a,#1c2248)', html: typingGame }
     ];
 
-    const $ = (id) => document.getElementById(id);
-    const gameGrid = $("gameGrid");
-    const filters = $("filters");
-    const search = $("search");
-    const gameDialog = $("gameDialog");
-    const playerTitle = $("playerTitle");
-    const frame = $("gameFrame");
+    const $ = id => document.getElementById(id);
+    const grid = $('gameGrid');
+    const filters = $('filters');
+    const search = $('search');
+    const dialog = $('gameDialog');
+    let selectedCategory = '全部';
     let activeGame = null;
-    let selectedCategory = "全部";
-
-    $("year").textContent = new Date().getFullYear();
+    $('year').textContent = new Date().getFullYear();
 
     function renderFilters() {
-      const categories = ["全部", ...new Set(games.map(game => game.category))];
-      if (!categories.includes(selectedCategory)) selectedCategory = "全部";
+      const categories = ['全部', ...new Set(games.map(game => game.category))];
+      if (!categories.includes(selectedCategory)) selectedCategory = '全部';
       filters.replaceChildren();
-
       for (const category of categories) {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "filter" + (category === selectedCategory ? " active" : "");
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'filter' + (category === selectedCategory ? ' active' : '');
         button.textContent = category;
-        button.setAttribute("aria-pressed", String(category === selectedCategory));
-        button.addEventListener("click", () => {
-          selectedCategory = category;
-          renderFilters();
-          renderGames();
-        });
+        button.setAttribute('aria-pressed', String(category === selectedCategory));
+        button.addEventListener('click', () => { selectedCategory = category; renderFilters(); renderGames(); });
         filters.appendChild(button);
       }
     }
 
     function renderGames() {
       const keyword = search.value.trim().toLowerCase();
-      const visibleGames = games.filter(game => {
-        const matchesCategory = selectedCategory === "全部" || game.category === selectedCategory;
-        const text = (game.title + " " + game.description + " " + game.category).toLowerCase();
-        return matchesCategory && text.includes(keyword);
-      });
-
-      $("summary").textContent = "共 " + games.length + " 款游戏，当前显示 " + visibleGames.length + " 款";
-      gameGrid.replaceChildren();
-
-      if (!visibleGames.length) {
-        const empty = document.createElement("div");
-        empty.className = "empty";
-        empty.textContent = "没有找到匹配的游戏，换个关键词试试。";
-        gameGrid.appendChild(empty);
-        return;
+      const visible = games.filter(game => (selectedCategory === '全部' || game.category === selectedCategory) && (game.title + ' ' + game.description + ' ' + game.category).toLowerCase().includes(keyword));
+      $('summary').textContent = '共 ' + games.length + ' 款游戏，当前显示 ' + visible.length + ' 款';
+      grid.replaceChildren();
+      if (!visible.length) {
+        const empty = document.createElement('div'); empty.className = 'empty'; empty.textContent = '没有找到匹配的游戏，换个关键词试试。'; grid.appendChild(empty); return;
       }
-
-      for (const game of visibleGames) {
-        const card = document.createElement("article");
-        card.className = "card";
-
-        const cover = document.createElement("div");
-        cover.className = "cover";
-        cover.style.background = game.color || "#263453";
-        cover.textContent = game.emoji || "🎮";
-
-        const body = document.createElement("div");
-        body.className = "card-body";
-
-        const top = document.createElement("div");
-        top.className = "card-top";
-        const title = document.createElement("h2");
-        title.textContent = game.title;
-        const tag = document.createElement("span");
-        tag.className = "tag";
-        tag.textContent = game.category;
-        top.appendChild(title);
-        top.appendChild(tag);
-
-        const description = document.createElement("p");
-        description.textContent = game.description;
-
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "play";
-        button.textContent = "▶ 一键游玩";
-        button.addEventListener("click", () => openGame(game));
-
-        body.appendChild(top);
-        body.appendChild(description);
-        body.appendChild(button);
-        card.appendChild(cover);
-        card.appendChild(body);
-        gameGrid.appendChild(card);
+      for (const game of visible) {
+        const card = document.createElement('article'); card.className = 'card';
+        const cover = document.createElement('div'); cover.className = 'cover'; cover.style.background = game.color; cover.textContent = game.emoji;
+        const body = document.createElement('div'); body.className = 'card-body';
+        const top = document.createElement('div'); top.className = 'card-top';
+        const title = document.createElement('h2'); title.textContent = game.title;
+        const tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = game.category;
+        top.append(title, tag);
+        const description = document.createElement('p'); description.textContent = game.description;
+        const play = document.createElement('button'); play.type = 'button'; play.className = 'play'; play.textContent = '▶ 一键游玩'; play.addEventListener('click', () => openGame(game));
+        body.append(top, description, play); card.append(cover, body); grid.appendChild(card);
       }
     }
 
-    function loadGame(game) {
-      const newFrame = frame.cloneNode(false);
-      newFrame.removeAttribute("src");
-      newFrame.removeAttribute("srcdoc");
-      newFrame.title = game.title + " · 游戏运行区域";
-      newFrame.srcdoc = game.html;
-      frame.replaceWith(newFrame);
+    function loadGame() {
+      const oldFrame = $('gameFrame');
+      const newFrame = oldFrame.cloneNode(false);
+      newFrame.title = activeGame.title + ' · 游戏运行区域';
+      newFrame.srcdoc = activeGame.html;
+      oldFrame.replaceWith(newFrame);
     }
 
     function openGame(game) {
       activeGame = game;
-      playerTitle.textContent = game.title;
-      loadGame(game);
-      if (!gameDialog.open) {
-        gameDialog.showModal();
-      }
+      $('playerTitle').textContent = game.title;
+      loadGame();
+      if (!dialog.open) dialog.showModal();
     }
 
-    $("restartButton").addEventListener("click", () => {
-      if (activeGame) loadGame(activeGame);
-    });
-
-    $("closeButton").addEventListener("click", () => {
-      gameDialog.close();
-    });
-
-    gameDialog.addEventListener("close", () => {
-      const frameNow = $("gameFrame");
-      frameNow.removeAttribute("srcdoc");
-      frameNow.src = "about:blank";
+    $('restartButton').addEventListener('click', () => { if (activeGame) loadGame(); });
+    $('closeButton').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('close', () => {
+      const frame = $('gameFrame');
+      frame.removeAttribute('srcdoc');
+      frame.src = 'about:blank';
       activeGame = null;
     });
-
-    $("fullscreenButton").addEventListener("click", async () => {
+    $('fullscreenButton').addEventListener('click', async () => {
       try {
-        const player = $("gameDialog").querySelector(".player");
-        if (document.fullscreenElement) {
-          await document.exitFullscreen();
-        } else if (player.requestFullscreen) {
-          await player.requestFullscreen();
-        }
-      } catch (error) {
-        console.warn(error);
-      }
+        const player = $('player');
+        if (document.fullscreenElement) await document.exitFullscreen();
+        else if (player.requestFullscreen) await player.requestFullscreen();
+      } catch (error) { console.warn('Fullscreen unavailable', error); }
     });
-
-    search.addEventListener("input", renderGames);
+    search.addEventListener('input', renderGames);
     renderFilters();
     renderGames();
   </script>
